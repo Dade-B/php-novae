@@ -1,0 +1,11 @@
+core:
+	core modules
+
+
+moduleLoader:
+	the system for loading modules, whether core or not
+
+
+common:   #the word common represents that classes in here are classes common to multiple modules, such as the interfaces folder
+	interfaces:   interfaces that might be useful for modules to implement, that we're asserting to have good form,
+		      in order to assist with modules having the ability to functionally replace themselves
