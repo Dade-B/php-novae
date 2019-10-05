@@ -1,5 +1,5 @@
 <?php
-	namespace novae\common\interfaces;
+	namespace Novae\Common\Interfaces;
 
 	interface SaySomething {
 
