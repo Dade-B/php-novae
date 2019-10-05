@@ -6,4 +6,7 @@
 		public function setTimestamp($timestamp);
 		public function getData();
 		public function setData($data);
+
+		public function getName();
+		public function setName();
 	}
