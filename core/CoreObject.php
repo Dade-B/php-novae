@@ -5,10 +5,10 @@
 		The base class for all of our later classes,
 
 		getter / setter support:
-			Create function __get_foo for retrieving $obj->foo,
-			Create __set_foo for setting $obj->foo (or preventing it)
+			Create function getFoo for retrieving $obj->foo,
+			Create setFoo for setting $obj->foo (or preventing it)
 
-		change handler:
+		change handler: --- ToDo: revisit naming
 			Create function __updated_foo($to, $from), and it will be called
 			when $obj->foo is upated from $from to $to;   This is not an event, because it
 			is intended to be running at a lower level, rather than having events emitted
@@ -19,6 +19,8 @@
 
 		Restricting / freezing properties will be in the later class that will implement
 		other validation and parsing needs.
+
+		The getter/setter causes case sensitivity, but we're assuming lowerCamelCase for properties.....
 	*/
 
 	class CoreObject {
@@ -60,11 +62,13 @@
 		{
 			$cache = &$this->getStaticCachePointer(get_called_class(), $key);
 
+			$func = "get".ucfirst($key);
+
 			if (!isset($cache["has-getter"]))
-				$cache["has-getter"] = method_exists($this, "__get_".$key);
+				$cache["has-getter"] = method_exists($this, $func);
 
 			if ($cache["has-getter"])
-				return $this->{"__get_".$key}();
+				return $this->{$func}();
 
 			return $this->data[$key];
 		}
@@ -74,8 +78,10 @@
 			$called_class = get_called_class();
 			$cache = &$this->getStaticCachePointer($called_class, $key);
 
+			$setFunc = "set".ucfirst($key);
+
 			if (!isset($cache["has-setter"]))
-				$cache["has-setter"] = method_exists($this, "__set_".$key);
+				$cache["has-setter"] = method_exists($this, $setFunc);
 
 			if (!isset($cache["has-updated-callback"]))
 				$cache["has-updated-callback"] = method_exists($this, "__updated_".$key);
@@ -84,7 +90,7 @@
 			{
 				if ($cache["has-updated-callback"] && !$this->isConstructing)
 					$oldValue = $this->{$key};
-				$this->{"__set_".$key}( $value );
+				$this->{$setFunc}( $value );
 				if ($cache["has-updated-callback"] && !$this->isConstructing)
 				{
 					$newValue = $this->$key; // not using $value in case the setter changed it
@@ -93,7 +99,7 @@
 				return;
 			}
 
-			$this->data[$key] = $value;
+			return $this->data[$key] = $value;
 		}
 
 	}
