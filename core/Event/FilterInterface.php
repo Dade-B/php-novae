@@ -1,5 +1,5 @@
 <?php
-	namespace Novae\Core\Event;
+	namespace Novae\Event;
 
 	interface FilterInterface {
 		public function verify( EventInterface $event );

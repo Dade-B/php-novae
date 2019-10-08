@@ -1,5 +1,5 @@
 <?php
-	namespace Novae\Core\Event;
+	namespace Novae\Event;
 
 	class Filter implements FilterInterface {
 

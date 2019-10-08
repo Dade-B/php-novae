@@ -1,5 +1,5 @@
 <?php
-	namespace Novae\Core\Event;
+	namespace Novae\Event;
 
 	interface ProviderInterface {
 		public function registerToProvider(callable $listener);

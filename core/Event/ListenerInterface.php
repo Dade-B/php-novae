@@ -1,5 +1,5 @@
 <?php
-	namespace Novae\Core\Event;
+	namespace Novae\Event;
 
 	interface ListenerInterface {
 		public function __invoke( object $event );

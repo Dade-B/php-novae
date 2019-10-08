@@ -1,9 +1,9 @@
 <?php
-	namespace Novae\Core;
+	namespace Novae;
 
-	class Log implements \Novae\Core\Event\EventInterface
+	class Log implements \Novae\Event\EventInterface
 	{
-		use \Novae\Core\Event\EventTrait { __construct_EventTrait as __construct; }
+		use \Novae\Event\EventTrait { __construct_EventTrait as __construct; }
 
 
 
@@ -32,6 +32,6 @@
 
 			$logClass = __CLASS__;
 			$logEntry = new $logClass(self::$logMethodMap[$method], ...$args);
-			return \Novae\Core\Event\Stream::emit($logEntry);
+			return \Novae\Event\Stream::emit($logEntry);
 		}
 	}

@@ -1,5 +1,5 @@
 <?php
-	namespace Novae\Core\Event;
+	namespace Novae\Event;
 
 	trait EventTrait {
 		private $__eventTrait_data;
