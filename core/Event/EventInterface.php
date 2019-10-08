@@ -1,12 +1,4 @@
 <?php
 	namespace Novae\Event;
-	interface EventInterface {
-
-		public function getTimestamp();
-		public function setTimestamp($timestamp);
-		public function getData();
-		public function setData($data);
-
-		public function getName();
-		public function setName();
+	interface EventInterface { /* just an empty shell, until we have parent class validation of data maps */
 	}

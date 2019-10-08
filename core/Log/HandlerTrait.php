@@ -5,12 +5,12 @@
 
 		static public function FormatMessage( \Novae\Event\EventInterface $event )
 		{
-			$eventData = $event->getData();
+			$eventData = $event->getDataArray();
 
 			$str = str_pad("", 60, "*")."\n";
-			$str .= "Time: ".date("Y-m-d H:i:s", $event->getTimestamp())."\n";
-			$str .= "Type: ".$eventData["logType"]."\n";
-			$str .= "Name: ".$event->getName()."\n";
+			$str .= "Time: ".date("Y-m-d H:i:s", $event->timestamp)."\n";
+			$str .= "Type: ".$event->logType."\n";
+			$str .= "Name: ".$event->name."\n";
 			$str .= str_pad("", 60, "*")."\n";
 
 			$column = 0;

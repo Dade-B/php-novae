@@ -17,37 +17,42 @@
 		public function verify( EventInterface $event )
 		{
 			if (is_string($this->filter))
-				return (strtolower($event->getName()) == $this->filter);
+				return (strtolower($event->name) == $this->filter);
 
 			else if (is_array($this->filter))
 			{
 				$match = TRUE;
-				$data = null;
+				//ToDo:  refactor to simplify this....
 				foreach( $this->filter as $key => $value)
 				{
-					$data = $data ?? $event->getData(); // todo:   Remove duplication when base object exists
-					if (!isset($data[$key]) && !is_null($value))
+					$eventValue = $event->{$key};
+
+					if ($eventValue === $value)
+						continue;
+
+					if (is_null($eventValue) != is_null($value))
 					{
 						$match = FALSE;
 						break;
 					}
-					else if ((is_string($value)||is_numeric($value)) != (is_string($data[$key])||is_numeric($data[$key])))
+					// compare numeric strings equally to numbers/floats,
+					// compare bool values to numeric values
+					else if ((is_numeric($value)||is_bool($value)) && (is_numeric($eventValue)||is_bool($eventValue)))
 					{
-						$match = FALSE;
-						throw new Exception("ToDo:   comparison of event filter + event data key '".$key." is not equally numeric/string;   determine effective exception or failthrough in the future");
-						break;
-					}
-					else if (is_string($value) || $is_numeric($value))
-					{
-						if ($value != $data[$key])
+						if ($value+0 != $eventValue+0)
 						{
 							$match = FALSE;
 							break;
 						}
 					}
-					else
+					else if (!is_string($value) || !is_string($eventValue))
 					{
 						throw new Exception("ToDo:   determine other types to compare in the future");
+					}
+					else if ($value != $eventValue)
+					{
+						$match = FALSE;
+						break;
 					}
 				}
 

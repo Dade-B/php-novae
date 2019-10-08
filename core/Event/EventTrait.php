@@ -2,41 +2,6 @@
 	namespace Novae\Event;
 
 	trait EventTrait {
-		private $__eventTrait_data;
-		private $__eventTrait_timestamp = FALSE;
-		private $__eventTrait_name = FALSE;
-
-		public function setTimestamp($to)
-		{
-			throw new ToDoException("timestamps are read-only"); // replace when the exception framework exists
-		}
-
-		public function setData( $data )
-		{
-			throw new ToDoException("Event data is read-only"); // replace when the exception framework exists
-		}
-
-		public function setName()
-		{
-			throw new ToDoException("Event data is read-only"); // replace when the exception framework exists
-		}
-
-		public function getTimestamp()
-		{
-			return $this->__eventTrait_timestamp;
-		}
-
-		public function getData()
-		{
-			return $this->__eventTrait_data;
-		}
-
-		public function getName()
-		{
-			return $this->__eventTrait_name;
-		}
-
-
 		// Unpack arbitrary data provided to the LogEntry constructor, in to Log Data
 		private function __eventTrait_unpackData($data)
 		{
@@ -71,15 +36,6 @@
 			if ($strings && !array_key_exists("name", $newData))
 				$newData["name"] = array_shift($strings);
 
-/*			{
-				asort($strings_lengthMap);
-				reset($strings_lengthMap);
-
-				$thisStringKey = key($strings_lengthMap);
-				$newData["name"] = $strings[$thisStringKey];
-				unset($strings[$thisStringKey]);
-			}
-*/
 			if ($strings && !isset($newData["message"]))
 				$newData["message"] = implode("\n", $strings);
 
@@ -124,16 +80,12 @@
 
 				if (!is_numeric($data["timestamp"]))
 					throw new ToDo(); // Data type exception needed
-
-				$this->__eventTrait_timestamp = $data["timestamp"];
 			}
 			else
-				$this->__eventTrait_timestamp = microtime(TRUE);
+				$data["timestamp"] = microtime(TRUE);
 
-			if (isset($data["name"]))
-				$this->__eventTrait_name = $data["name"];
-
-			$this->__eventTrait_data = $data;
+			foreach($data as $key => &$value)
+				$this->data[$key] = &$value;
 		}
 
 

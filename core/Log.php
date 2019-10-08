@@ -1,7 +1,7 @@
 <?php
 	namespace Novae;
 
-	class Log implements \Novae\Event\EventInterface
+	class Log extends CoreObject implements \Novae\Event\EventInterface
 	{
 		use \Novae\Event\EventTrait { __construct_EventTrait as __construct; }
 
