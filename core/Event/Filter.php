@@ -25,7 +25,10 @@
 				//ToDo:  refactor to simplify this....
 				foreach( $this->filter as $key => $value)
 				{
-					$eventValue = $event->{$key};
+					if ($key == "__class") // need to retrieve manually since we aren't using getDataArray
+						$eventValue = get_class($event);
+					else
+						$eventValue = $event->{$key};
 
 					if ($eventValue === $value)
 						continue;
