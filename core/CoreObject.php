@@ -60,7 +60,7 @@
 	class CoreObject {
 		protected $data = [];
 
-		private $isCnstructing = FALSE; // block changed handlers when initializing properties from the constructor
+		private $isConstructing = FALSE; // block changed handlers when initializing properties from the constructor
 
 		// basic __construct allows us to pass in array data.
 		public function __construct( $data = [] )
@@ -103,6 +103,9 @@
 
 			if ($cache["has-getter"])
 				return $this->{$func}();
+
+			if (!isset($this->data[$key]))
+				return null;
 
 			return $this->data[$key];
 		}

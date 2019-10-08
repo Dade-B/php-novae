@@ -3,7 +3,7 @@
 
 	class Log extends CoreObject implements \Novae\Event\EventInterface
 	{
-		use \Novae\Event\EventTrait { __construct_EventTrait as __construct; }
+		use \Novae\Event\EventTrait; // ToDo:  update when multi-constructor support exists
 
 
 
@@ -21,6 +21,11 @@
 			"alert" =>	[ "logType" => "alert" ],
 			"emergency" =>	[ "logType" => "emergency" ],
 		];
+
+		public function __construct( ...$data )
+		{
+			 $this->__construct_EventTrait(...$data);
+		}
 
 		static public function __callStatic($method, $args)
 		{

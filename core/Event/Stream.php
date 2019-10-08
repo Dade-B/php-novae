@@ -35,6 +35,8 @@
 				$listener($event);
 			}
 //var_Dump(["Finished emitting event to ".count($listeners)." listener(s)" => $event]);
+
+			return $event;
 		}
 
 		static private function ensureEventObject($event)
@@ -45,9 +47,9 @@
 					throw new ToDoException("Stream::emit can't accept a event object as well as additinonal arbitrary event details");
 				$event = $event[0];
 			}
-			else // Stream::emit("foo", [ bar => $baz]) -> Stream::emit(new Event("foo", [bar => $baz]))
+			else // Stream::emit("foo", [ bar => $baz]) -> Stream::emit(new \Novae\Event("foo", [bar => $baz]))
 			{
-				$event = new Event(...$event);
+				$event = new \Novae\Event(...$event);
 			}
 
 			return $event;
