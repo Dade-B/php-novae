@@ -1,10 +1,5 @@
 Core:
-	core modules
-
-
-ModuleLoader:
-	the system for loading modules, whether core or not
-
+	core modules (Novae\*)
 
 Common:   #the word common represents that classes in here are classes common to multiple modules, such as the interfaces folder
 	Interfaces:   interfaces that might be useful for modules to implement, that we're asserting to have good form,

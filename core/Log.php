@@ -31,7 +31,7 @@
 			}
 
 			$logClass = __CLASS__;
-			$logEntry = new $logClass(self::$logMethodMap[$method], ...$args);
+			$logEntry = new $logClass(self::$logMethodMap[$method], ["eventType" => "log"], ...$args);
 			return \Novae\Event\Stream::emit($logEntry);
 		}
 	}
