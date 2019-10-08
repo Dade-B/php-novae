@@ -24,6 +24,22 @@
 	class CoreObject {
 		protected $data = [];
 
+		private $isCnstructing = FALSE; // block changed handlers when initializing properties from the constructor
+
+		// basic __construct allows us to pass in array data.
+		public function __construct( $data = [] )
+		{
+			$this->isConstructing = TRUE;
+
+			if (is_array($data))
+			{
+				foreach($data as $key => $value) // ensure getters/setters will be used, rather than setting directly in to data
+					$this->{$key} = $value;
+			}
+
+			$this->isConstructing = FALSE;
+		}
+
 		// this static cache needs to store information per-class and per-property; even though $this
 		// is instanced, PHP will cause -this- static property (whether declared in the function or in the
 		// class itself) to shared across all derived classes ( i.e.   __get in 'A' and 'B' where 'A' and 'B' both
@@ -66,10 +82,10 @@
 
 			if ($cache["has-setter"])
 			{
-				if ($cache["has-updated-callback"])
+				if ($cache["has-updated-callback"] && !$this->isConstructing)
 					$oldValue = $this->{$key};
 				$this->{"__set_".$key}( $value );
-				if ($cache["has-updated-callback"])
+				if ($cache["has-updated-callback"] && !$this->isConstructing)
 				{
 					$newValue = $this->$key; // not using $value in case the setter changed it
 					$this->{"__updated_".$key}( $newValue, $oldValue );
