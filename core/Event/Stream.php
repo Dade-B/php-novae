@@ -26,7 +26,7 @@
 				return $event;
 
 			$listeners = self::getListenersForEvent($event);
-var_dump(["listeners found for emit" => $listeners]);
+//var_dump(["listeners found for emit" => $listeners]);
 			foreach($listeners as $listener)
 			{
 				if ($stoppable && $event->isPropagationStopped())
@@ -34,7 +34,7 @@ var_dump(["listeners found for emit" => $listeners]);
 
 				$listener($event);
 			}
-var_Dump(["Finished emitting event to ".count($listeners)." listener(s)" => $event]);
+//var_Dump(["Finished emitting event to ".count($listeners)." listener(s)" => $event]);
 		}
 
 		static private function ensureEventObject($event)
