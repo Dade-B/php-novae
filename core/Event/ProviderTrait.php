@@ -35,6 +35,9 @@
 
 			$event = self::ensureEventObject($event);
 
+			if (isset($this))
+				$event->self = $this;
+
 			$stoppable = is_subclass_of($event, '\PSR\EventDispatcher\StoppableEventInterface');
 			if ($stoppable && $event->isPropagationStopped()) /* no need to check filters */
 				return $event;
