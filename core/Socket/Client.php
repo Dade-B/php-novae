@@ -4,7 +4,7 @@
 	class Client extends Socket {
 		protected $proto = null; // The detected protocol, if known.  ToDo:   Make read-only when parser is available.
 
-		function connect($host)
+		public function connect($host)
 		{
 			if ($this->socket)
 			{
@@ -35,11 +35,7 @@
 				\Novae\Log::error("Connection blocking", "Failed to disable blocking on socket destined to ${host}");
 				throw new \Exception("Connection failed (blocking)");
 			}
-			$this->socket = $fp;
-
-			/* reset the buffers, since this is a new connection */
-			$this->writeBuffer = $this->readBuffer = "";
-			$this->writeBufferSize = $this->readBufferSize = 0;
+			$this->socket = $fp; /* setter for $this->socket includes a reset of the buffers */
 		}
 
 	}

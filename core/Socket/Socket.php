@@ -1,19 +1,42 @@
 <?php
 	namespace Novae\Socket;
 
-	class Socket {
+	/** Read/Write buffers as a base for Client/Server classes
+	*/
+
+	class Socket extends \Novae\CoreObject {
+		use \Novae\Event\ProviderTrait;
 
 		protected $readBuffer = "";
 		protected $readBufferSize = 0;
 		protected $writeBuffer = "";
 		protected $writeBufferSize = 0;
 
-		protected $socket = null;
+		protected $_socket = null;
 
 		function writeToBuffer( $message )
 		{
 			$this->writeBuffer .= $message;
 			$this->writeBufferSize += strlen($message);
+		}
+
+		function __setSocket( $socket )
+		{
+			if (!is_null($this->_socket))
+			{
+				if (!is_null($socket))
+					\Log::warn("Socket-disconnect-implicit", "Implicitely closing Socket pointer due to new socket provided", ["old socket" => $socket, "new socket" => $socket]);
+
+				$this->disconnect(FALSE); // disconnect with-out a timed shutdown of the buffers
+			}
+
+			if ($socket !== $this->_socket)
+			{
+				$this->writeBuffer = $this->readBuffer = "";
+				$this->writeBufferSize = $this->readBufferSize = 0;
+			}
+
+			$this->_socket = $socket;
 		}
 
 		function processWriteBuffer()
@@ -42,7 +65,7 @@
 					\Novae\Log::debug("Write blocked", "fwrite returned 0 while there was still ".$this->writeBufferSize." bytes waiting to be written");
 					break;
 				}
-else \Novae\Log::debug("write", ["msg sent" => substr($this->writeBuffer, 0, $sizeWritten)]);
+//else \Novae\Log::debug("write", ["msg sent" => substr($this->writeBuffer, 0, $sizeWritten)]);
 				$this->writeBuffer = substr($this->writeBuffer, $sizeWritten);
 				$this->writeBufferSize -= $sizeWritten;
 				$totalWrittenSize += $sizeWritten;
@@ -66,8 +89,9 @@ else \Novae\Log::debug("write", ["msg sent" => substr($this->writeBuffer, 0, $si
 		function readToBuffer()
 		{
 			if (!$this->socket)
-				$this->connect();
-
+{
+				throw new \ToDo(); // ToDo: replace with a not connected exception when our exception framework exists
+}
 			while (!feof($this->socket))
 			{
 				if (($newBuffer = fread($this->socket, 2048)) !== FALSE)
@@ -76,7 +100,6 @@ else \Novae\Log::debug("write", ["msg sent" => substr($this->writeBuffer, 0, $si
 					{
 						$this->readBuffer .= $newBuffer;
 						$this->readBufferSize += $size;
-\Novae\Log::debug("Message received", ["new message" => $newBuffer, "message size" => $size, "read buffer size" => $this->readBufferSize]);
 					}
 					else
 						break;
@@ -89,8 +112,10 @@ else \Novae\Log::debug("write", ["msg sent" => substr($this->writeBuffer, 0, $si
 		}
 
 
-		function processReadBuffer()
+		function processReadBuffer($once=FALSE)
 		{
+			$receivedMessage = 0;
+
 			/* temp code that just delineates each message at \n */
 			while ($this->readBufferSize &&
 				($pos = strpos($this->readBuffer, "\n")) !== FALSE)
@@ -101,10 +126,15 @@ else \Novae\Log::debug("write", ["msg sent" => substr($this->writeBuffer, 0, $si
 				$this->readBufferSize -= ($pos+1);
 
 
-				$this->emit("received", [ "message" => $message ]);
+				$this->emit("socket-receive-message", [ "message" => $message ]);
+
+				if ($once)
+					return $message;
+
+				$receivedMessage++;
 			}
 
-			return;
+			return $receivedMessage;
 		}
 
 		/** process the Write and Read buffers.  If a timeout has been specified,
@@ -131,9 +161,6 @@ else \Novae\Log::debug("write", ["msg sent" => substr($this->writeBuffer, 0, $si
 				$rbSize = $this->readBufferSize;
 
 				$wroteFromBuffer = $readFromBuffer = $readToBuffer = FALSE;
-
-				if (!$wbSize)
-					break;
 
 				if ($this->writeBufferSize)
 				{
@@ -219,7 +246,7 @@ else \Novae\Log::debug("write", ["msg sent" => substr($this->writeBuffer, 0, $si
 			}
 
 			fclose($this->socket);
-			$this->socket = null;
+			$this->_socket = null;
 
 			$this->emit("socket-disconnected");
 		}
